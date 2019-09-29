@@ -11,7 +11,8 @@ const shell = require('shelljs');
 const download = require('download-git-repo');
 
 var template = {
-    react: 'direct:https://github.com/AbelCodeUp/react-tempate.git'
+    react: 'direct:https://github.com/AbelCodeUp/react-tempate.git',
+    vue:'',
 }
 const versionStr = figlet.textSync('ABCReading');
 const _version = require('../package.json').version;
