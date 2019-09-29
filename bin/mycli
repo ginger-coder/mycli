@@ -1,0 +1,75 @@
+#!/usr/bin/env node
+//核心处理命令行
+
+const program = require('commander');
+const figlet = require('figlet');
+const Printer = require('@darkobits/lolcatjs');
+const chalk = require('chalk');
+const inquirer = require('inquirer');
+const ora = require('ora');
+const shell = require('shelljs');
+const download = require('download-git-repo');
+
+var template = {
+    react: 'direct:https://github.com/AbelCodeUp/react-tempate.git'
+}
+const versionStr = figlet.textSync('ABCReading');
+const _version = require('../package.json').version;
+
+const bindHandler = {
+    init() {
+        console.log('进入初始化项目');
+        inquirer
+            .prompt([
+                {
+                    type: 'text',
+                    name: 'dirname',
+                    message: '请输入文件夹的名称'
+                },
+                {
+                    type: 'list',
+                    name: 'jskind',
+                    message: '请选择使用的前端框架',
+                    choices: ['react', 'vue']
+                }
+            ])
+            .then(answers => {
+                const spinner = ora('Downloading template...');
+                spinner.start();
+                const _pwddir = shell.pwd().stdout;
+                const projectPath = `${_pwddir}/${answers.dirname}`;
+                shell.rm('-rf', projectPath);
+                shell.mkdir(projectPath);
+                
+                download(template[answers.jskind], projectPath , { clone: true }, function (err) {
+                    spinner.stop();
+                    if(err){
+                        console.log('失败');
+                        
+                    }else{
+                        console.log('下载成功');
+                        
+                    }
+                })
+                
+            })
+            .catch(function (params) {
+                console.log('异常');
+            });
+    }
+}
+
+program
+    .version(Printer.default.fromString(versionStr + '\n bianxiaokai@100tal.com  ' + _version), '-v --version', '当前cli版本信息')
+    .option('-i,--init', '初始化前端项目')
+    .usage('[cmd] <options>')
+    .arguments('<cmd> [env]')
+    .action(function (cmd, otherParams) {
+        const handler = bindHandler[cmd]
+        if (typeof handler === 'undefined') {
+            console.error(chalk.yellow('非常遗憾') + chalk.red(cmd) + chalk.yellow('暂未实现'));
+        } else {
+            handler();
+        }
+    })
+    .parse(process.argv)
