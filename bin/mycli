@@ -14,7 +14,7 @@ var template = {
     react: 'direct:https://github.com/AbelCodeUp/react-tempate.git',
     vue: '',
 }
-const versionStr = figlet.textSync('ABCReading');
+const versionStr = figlet.textSync('ke');
 const _pack = require('../package.json');
 
 const bindHandler = {
@@ -42,14 +42,18 @@ const bindHandler = {
                 shell.mkdir(projectPath);
 
                 download(template[answers.jskind], projectPath, { clone: true }, function (err) {
-                    spinner.stop();
+                    
                     if (err) {
-                        console.log('失败');
-
+                        console.log(chalk.red('项目创建失败'));
+                        shell.exit(1);
                     } else {
-
+                        //修改package.json的name值
                         shell.sed('-i', 'project-1', answers.dirname, projectPath + '/package.json');
-                        console.log(chalk.green('项目创建成功'));
+                        shell.cd(answers.dirname);
+                        shell.exec('npm install',function(){
+                            spinner.stop();
+                            console.log(chalk.green('项目创建成功'));
+                        });
 
                     }
                 })
@@ -57,6 +61,7 @@ const bindHandler = {
             })
             .catch(function (params) {
                 console.log('异常');
+                shell.exit(1);
             });
     }
 }

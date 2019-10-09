@@ -9,6 +9,7 @@
     var b = a;
     b[1] = 4;
     console.log(a);
+    console.error('error');
 ```
 
 *你好*
@@ -30,4 +31,4 @@
 - 435
 - 57467
 - 8756785
-- 
+- fadfadf
